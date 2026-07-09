@@ -1,0 +1,182 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Detail | GBV Support System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --royal: #2563EB;
+            --indigo: #4F46E5;
+            --purple: #7C3AED;
+            --emerald: #10B981;
+            --orange: #F59E0B;
+            --white: #FFFFFF;
+            --soft: #F8FAFC;
+            --text: #0F172A;
+            --muted: #64748B;
+        }
+        *{box-sizing:border-box;font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+        body{margin:0;background:linear-gradient(180deg,#eef5ff,#f8fbff);color:var(--text)}
+        a{text-decoration:none;color:inherit}
+        .page-container{max-width:1180px;margin:0 auto;padding:20px 18px 36px}
+        .topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:24px;padding:22px 26px;border-radius:24px;background:rgba(255,255,255,0.9);box-shadow:0 28px 80px rgba(15,23,42,0.08);backdrop-filter:blur(18px)}
+        .topbar .title{display:grid;gap:6px}
+        .topbar h1{margin:0;font-size:clamp(1.5rem,2vw,2.2rem);font-weight:700;color:var(--indigo)}
+        .topbar p{margin:0;color:var(--muted)}
+        .topbar .top-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+        .pill{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:rgba(255,255,255,0.82);box-shadow:0 14px 40px rgba(15,23,42,0.05);font-size:0.95rem;color:var(--text)}
+        .pill.anon{background:rgba(37,99,235,0.12);color:#1d4ed8}
+        .pill.named{background:rgba(16,185,129,0.12);color:#047857}
+        .pill.status-submitted{background:rgba(37,99,235,0.12);color:#1d4ed8}
+        .pill.status-review{background:rgba(245,158,11,0.14);color:#b45309}
+        .pill.status-progress{background:rgba(124,58,237,0.12);color:#5b21b6}
+        .pill.status-resolved{background:rgba(16,185,129,0.12);color:#047857}
+        .grid-two{display:grid;grid-template-columns:1.9fr 1fr;gap:22px}
+        .card-glass{background:rgba(255,255,255,0.9);border:1px solid rgba(255,255,255,0.85);border-radius:28px;box-shadow:0 28px 80px rgba(15,23,42,0.08);backdrop-filter:blur(20px);padding:28px}
+        .section{margin-bottom:26px}
+        .section h2{margin:0 0 14px;font-size:1.1rem;color:var(--indigo)}
+        .detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+        .info-card{background:#f8fbff;border-radius:20px;padding:18px;border:1px solid rgba(37,99,235,0.12);}
+        .info-card strong{display:block;margin-bottom:8px;color:var(--text)}
+        .info-card p{margin:0;color:var(--muted);line-height:1.7;}
+        .summary-card{background:rgba(255,255,255,0.9);border:1px solid rgba(255,255,255,0.85);border-radius:26px;padding:24px;display:grid;gap:18px;position:sticky;top:24px;height:max-content}
+        .summary-card h3{margin:0;color:var(--indigo)}
+        .summary-item{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-radius:18px;background:rgba(37,99,235,0.08)}
+        .summary-item strong{color:var(--text)}
+        .summary-item span{color:var(--muted)}
+        .timeline{border-left:3px solid rgba(37,99,235,0.18);padding-left:18px;display:grid;gap:18px}
+        .timeline-step{position:relative;padding-left:24px}
+        .timeline-step::before{content:'';position:absolute;left:-11px;top:4px;width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid rgba(37,99,235,0.35)}
+        .timeline-step.active::before{border-color:var(--indigo);background:linear-gradient(180deg,var(--royal),var(--indigo))}
+        .timeline-step strong{display:block;margin-bottom:6px;color:var(--text)}
+        .timeline-step span{color:var(--muted);font-size:0.95rem}
+        .form-field{display:grid;gap:14px;margin-bottom:22px}
+        .form-field label{font-weight:600;color:var(--text)}
+        .form-field select,.form-field textarea{width:100%;border:1px solid rgba(148,163,184,0.32);border-radius:18px;padding:16px 18px;background:rgba(248,250,252,0.95);color:var(--text);font-family:inherit;resize:vertical}
+        .form-footer{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
+        .counter{color:var(--muted);font-size:0.95rem}
+        .btn-primary{background:linear-gradient(90deg,var(--royal),var(--indigo));border:none;color:white;padding:14px 22px;border-radius:18px;font-weight:700;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease}
+        .btn-primary:hover{transform:translateY(-1px);box-shadow:0 20px 40px rgba(37,99,235,0.2)}
+        .btn-secondary{background:#ffffff;border:1px solid rgba(37,99,235,0.16);color:var(--indigo);padding:14px 22px;border-radius:18px;font-weight:700;cursor:pointer;}
+        .media-card{background:rgba(255,255,255,0.9);border-radius:22px;padding:22px;display:grid;place-items:center;text-align:center;box-shadow:0 16px 48px rgba(15,23,42,0.06)}
+        .media-card i{font-size:1.8rem;color:var(--indigo)}
+        .media-card .label{margin-top:12px;font-weight:700;color:var(--text)}
+        @media(max-width:992px){.grid-two{grid-template-columns:1fr}.topbar{flex-direction:column;align-items:flex-start}}
+    </style>
+</head>
+<body>
+
+<div class="page-container">
+    <div class="topbar">
+        <div class="title">
+            <h1>Report Case Management</h1>
+            <p>Review and update the case while preserving audit trails and administrator control.</p>
+        </div>
+        <div class="top-actions">
+            <span class="pill"><i class="bi bi-calendar-event-fill"></i> {{ report.created_at|date:"F d, Y" }}</span>
+            <span class="pill"><i class="bi bi-clock-fill"></i> {{ report.created_at|date:"H:i" }}</span>
+            {% if report.is_anonymous %}
+                <span class="pill anon"><i class="bi bi-mask"></i> Anonymous</span>
+            {% else %}
+                <span class="pill named"><i class="bi bi-person-fill"></i> Named Reporter</span>
+            {% endif %}
+            <span class="pill {% if report.status == 'Submitted' or report.status == 'Pending' %}status-submitted{% elif report.status == 'Under Review' or report.status == 'Review' %}status-review{% elif report.status == 'In Progress' or report.status == 'Progress' %}status-progress{% elif report.status == 'Resolved' or report.status == 'Closed' %}status-resolved{% else %}status-submitted{% endif %}"><i class="bi bi-info-circle-fill"></i> {{ report.status }}</span>
+        </div>
+    </div>
+
+    <div class="grid-two">
+        <div class="card-glass">
+            <div class="section">
+                <h2>Case Overview</h2>
+                {% include 'includes/report_detail_core.html' %}
+            </div>
+
+            <div class="section">
+                <h2>Case Timeline</h2>
+                <div class="timeline">
+                    <div class="timeline-step active">
+                        <strong><i class="bi bi-send-check-fill"></i> Report Created</strong>
+                        <span>{{ report.created_at|date:"F d, Y H:i" }}</span>
+                    </div>
+                    <div class="timeline-step{% if report.status == 'Under Review' or report.status == 'Review' or report.status == 'In Progress' or report.status == 'Progress' or report.status == 'Resolved' or report.status == 'Closed' %} active{% endif %}">
+                        <strong><i class="bi bi-search"></i> Under Review</strong>
+                        <span>Case review begins after assignment.</span>
+                    </div>
+                    <div class="timeline-step{% if report.status == 'In Progress' or report.status == 'Progress' or report.status == 'Resolved' or report.status == 'Closed' %} active{% endif %}">
+                        <strong><i class="bi bi-tools"></i> In Progress</strong>
+                        <span>Work on support, escalation, and case handling.</span>
+                    </div>
+                    <div class="timeline-step{% if report.status == 'Resolved' or report.status == 'Closed' %} active{% endif %}">
+                        <strong><i class="bi bi-check2-circle"></i> Resolved</strong>
+                        <span>Final case closure and outcome recorded.</span>
+                    </div>
+                </div>
+            </div>
+
+            <form method="post" class="section" id="adminResponseForm">
+                {% csrf_token %}
+                <h2>Status Management</h2>
+                <div class="form-field">
+                    <label for="status">Update Report Status</label>
+                    <select name="status" id="status">
+                        <option value="Submitted" {% if report.status == "Submitted" %}selected{% endif %}>Submitted</option>
+                        <option value="Under Review" {% if report.status == "Under Review" %}selected{% endif %}>Under Review</option>
+                        <option value="In Progress" {% if report.status == "In Progress" %}selected{% endif %}>In Progress</option>
+                        <option value="Resolved" {% if report.status == "Resolved" %}selected{% endif %}>Resolved</option>
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label for="admin_response">Admin Response</label>
+                    <textarea name="admin_response" id="admin_response" rows="6" maxlength="1000" placeholder="Type a response for the reporter...">{{ report.admin_response }}</textarea>
+                    <div class="field-footer"><span class="counter" id="responseCounter">{{ report.admin_response|length }} / 1000</span></div>
+                </div>
+
+                <div class="form-footer">
+                    <button type="submit" class="btn-primary" id="saveButton"><i class="bi bi-save-fill"></i> Save Changes</button>
+                    <a href="{% url 'admin_dashboard' %}" class="btn-secondary"><i class="bi bi-arrow-left-short"></i> Back to Dashboard</a>
+                </div>
+            </form>
+        </div>
+
+        <aside class="summary-card">
+            <h3>Sidebar Summary</h3>
+            <div class="summary-item"><strong>Reference Number</strong><span>{{ report.reference_number }}</span></div>
+            <div class="summary-item"><strong>Case Status</strong><span>{{ report.status }}</span></div>
+            <div class="summary-item"><strong>Reporter Type</strong><span>{% if report.is_anonymous %}Anonymous{% else %}Named{% endif %}</span></div>
+            <div class="summary-item"><strong>Date Submitted</strong><span>{{ report.created_at|date:"F d, Y" }}</span></div>
+            <div class="summary-item"><strong>Case Type</strong><span>{{ report.case_type|default:'Unspecified' }}</span></div>
+            <div class="summary-item"><strong>Location</strong><span>{{ report.location|default:'Unspecified' }}</span></div>
+
+            <div class="section" style="margin-top:18px">
+                <h2>Evidence Preview</h2>
+                {% include 'includes/report_detail_gallery.html' %}
+            </div>
+        </aside>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const textarea = document.getElementById('admin_response');
+    const counter = document.getElementById('responseCounter');
+    const saveBtn = document.getElementById('saveButton');
+
+    if(textarea){
+        textarea.addEventListener('input', ()=>{
+            counter.textContent = `${textarea.value.length} / 1000`;
+        });
+    }
+
+    document.getElementById('adminResponseForm')?.addEventListener('submit', ()=>{
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="bi bi-arrow-repeat animate-spin"></i> Saving...';
+    });
+</script>
+</body>
+</html>

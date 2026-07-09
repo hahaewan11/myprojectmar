@@ -1,0 +1,286 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>User Dashboard | GBV Support System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root{--royal:#2563EB;--indigo:#4F46E5;--purple:#7C3AED;--white:#FFFFFF;--muted:#F8FAFC;--emerald:#10B981}
+        *{box-sizing:border-box}
+        body{font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;background:var(--muted);color:#0f172a;margin:0}
+        a{color:inherit;text-decoration:none}
+
+        /* Layout */
+        .app{display:flex;min-height:100vh}
+        .sidebar{width:260px;background:linear-gradient(180deg,rgba(37,99,235,0.98),rgba(124,58,237,0.95));color:var(--white);padding:1.25rem 1rem;transition:width .28s ease;position:relative}
+        .sidebar.collapsed{width:72px}
+        .sidebar .brand{display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:1.05rem}
+        .sidebar .brand .logo{width:40px;height:40px;border-radius:10px;background:linear-gradient(90deg,var(--royal),var(--purple));display:grid;place-items:center;color:var(--white);font-weight:700}
+        .nav-items{margin-top:1.35rem;display:flex;flex-direction:column;gap:.45rem}
+        .nav-link{display:flex;align-items:center;gap:.75rem;padding:.65rem .6rem;border-radius:10px;color:rgba(255,255,255,0.95)}
+        .nav-link:hover{background:rgba(255,255,255,0.06);transform:translateY(-1px)}
+        .nav-link .icon{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,0.06)}
+        .toggle-btn{position:absolute;right:-18px;top:18px;background:var(--white);color:var(--royal);border-radius:10px;padding:.4rem;border:none;box-shadow:0 8px 20px rgba(2,6,23,.12);cursor:pointer}
+
+        /* Topbar */
+        .topbar{flex:1;background:transparent;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+        .topbar .welcome{display:flex;align-items:center;gap:.9rem}
+        .search{flex:1;max-width:520px}
+        .top-actions{display:flex;align-items:center;gap:.6rem}
+        .avatar{width:44px;height:44px;border-radius:50%;overflow:hidden;background:linear-gradient(90deg,var(--royal),var(--purple));display:grid;place-items:center;color:#fff;font-weight:700}
+        .badge-dot{position:relative}
+        .badge-dot::after{content:"";position:absolute;right:-6px;top:-6px;width:10px;height:10px;background:var(--emerald);border-radius:50%;box-shadow:0 0 0 3px rgba(16,185,129,0.12)}
+
+        /* Main content */
+        .content{flex:1;padding:1.25rem;}
+        .container-xl{max-width:1140px;margin:0 auto}
+        .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1rem}
+        .card-stat{background:var(--white);border-radius:12px;padding:1rem;box-shadow:0 12px 30px rgba(2,6,23,0.06);display:flex;align-items:center;justify-content:space-between;gap:1rem}
+        .card-stat .meta{display:flex;flex-direction:column}
+        .card-stat .meta .label{color:#64748b;font-weight:600}
+        .card-stat .meta .value{font-weight:700;font-size:1.35rem}
+        .card-stat .accent{width:56px;height:56px;border-radius:12px;display:grid;place-items:center;color:#fff}
+
+        .quick-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:1rem 0}
+        .quick-btn{background:linear-gradient(90deg,var(--royal),var(--indigo));color:#fff;padding:1rem;border-radius:12px;display:flex;flex-direction:column;align-items:flex-start;gap:.5rem;border:none;cursor:pointer;box-shadow:0 10px 30px rgba(37,99,235,.12)}
+        .quick-btn.secondary{background:#fff;color:#0f172a;border:1px solid #eef2ff}
+
+        .banner{background:linear-gradient(90deg,rgba(37,99,235,.06),rgba(124,58,237,.04));border-radius:12px;padding:1rem;margin:1rem 0;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+
+        .table-wrap{background:var(--white);border-radius:12px;padding:1rem;box-shadow:0 12px 30px rgba(2,6,23,.05)}
+        .status-badge{padding:.35rem .6rem;border-radius:999px;font-weight:600;font-size:.85rem}
+        .status-pending{background:rgba(245,158,11,.12);color:#b45309}
+        .status-review{background:rgba(59,130,246,.10);color:#1d4ed8}
+        .status-resolved{background:rgba(16,185,129,.12);color:#065f46}
+
+        /* Responsive */
+        @media (max-width:992px){.stats{grid-template-columns:repeat(2,1fr)}.quick-actions{grid-template-columns:repeat(2,1fr)}.sidebar{position:fixed;left:0;top:0;bottom:0;z-index:1050}.app{padding-left:72px}}
+        @media (max-width:576px){.stats{grid-template-columns:1fr}.quick-actions{grid-template-columns:1fr}.topbar{flex-direction:column;align-items:flex-start}}
+
+        /* small animations */
+        .fade-up{opacity:0;transform:translateY(10px);animation:fadeUp .6s forwards}
+        @keyframes fadeUp{to{opacity:1;transform:none}}
+    </style>
+</head>
+<body>
+    <div class="app">
+        <aside class="sidebar" id="sidebar">
+            <div class="brand"><div class="logo">GB</div><div class="d-none d-sm-block">User Dashboard</div></div>
+            <button class="toggle-btn d-none d-md-block" id="btnToggle" aria-label="Toggle sidebar"><i class="bi bi-chevron-left"></i></button>
+
+            <nav class="nav-items" aria-label="Main navigation">
+                <a class="nav-link" href="#">
+                    <span class="icon"><i class="bi bi-speedometer2"></i></span>
+                    <span class="d-none d-md-inline">Dashboard</span>
+                </a>
+                <a class="nav-link" href="{% url 'dashboard_submit' %}">
+                    <span class="icon"><i class="bi bi-pencil-square"></i></span>
+                    <span class="d-none d-md-inline">Submit Report</span>
+                </a>
+                <a class="nav-link" href="{% url 'my_reports' %}">
+                    <span class="icon"><i class="bi bi-journal-text"></i></span>
+                    <span class="d-none d-md-inline">My Reports</span>
+                </a>
+                <a class="nav-link" href="{% url 'user_profile' %}">
+                    <span class="icon"><i class="bi bi-person-circle"></i></span>
+                    <span class="d-none d-md-inline">Profile</span>
+                </a>
+                <a class="nav-link" href="{% url 'chatbot' %}">
+                    <span class="icon"><i class="bi bi-question-circle"></i></span>
+                    <span class="d-none d-md-inline">Help Center</span>
+                </a>
+
+                <div style="margin-top:8px;border-top:1px solid rgba(255,255,255,0.06);padding-top:.8rem"></div>
+                <a class="nav-link" href="#" id="sidebarLogoutLink">
+                    <span class="icon"><i class="bi bi-box-arrow-right"></i></span>
+                    <span class="d-none d-md-inline">Logout</span>
+                </a>
+            </nav>
+        </aside>
+
+        <div class="content">
+            <header class="topbar container-xl">
+                <div class="welcome">
+                    <h5 style="margin:0">Welcome back, <span style="color:var(--indigo)">{{ user.get_full_name|default:user.username }}</span></h5>
+                    <small class="text-muted">Good to see you — stay safe and report with confidence.</small>
+                </div>
+                <div class="top-actions">
+                    <div class="dropdown me-2 position-relative">
+                        <button class="btn btn-light btn-sm dropdown-toggle" type="button" id="notificationDropdown" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notifications">
+                            <i class="bi bi-bell"></i>
+                            {% if unread_count and unread_count > 0 %}
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:.65rem;min-width:1.5rem;padding:.35rem .45rem">{{ unread_count }}</span>
+                            {% endif %}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end p-0" aria-labelledby="notificationDropdown" style="min-width:300px;">
+                            <li><h6 class="dropdown-header">Notifications</h6></li>
+                            {% if notifications %}
+                                {% for notification in notifications %}
+                                    <li>
+                                        {% if notification.report %}
+                                            <a class="dropdown-item py-2" href="{% url 'report_detail' notification.report.id %}">
+                                                <div class="d-flex justify-content-between align-items-start">
+                                                    <div>
+                                                        <div class="small fw-semibold">{{ notification.message }}</div>
+                                                        <div class="small text-muted">{{ notification.created_at|date:"M d, Y H:i" }}</div>
+                                                    </div>
+                                                    {% if not notification.is_read %}
+                                                        <span class="badge bg-primary rounded-pill">New</span>
+                                                    {% endif %}
+                                                </div>
+                                            </a>
+                                        {% else %}
+                                            <div class="dropdown-item-text py-2">
+                                                <div class="small fw-semibold">{{ notification.message }}</div>
+                                                <div class="small text-muted">{{ notification.created_at|date:"M d, Y H:i" }}</div>
+                                            </div>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-center" href="{% url 'my_reports' %}">View all reports</a></li>
+                            {% else %}
+                                <li><span class="dropdown-item-text py-2 text-muted">No new notifications.</span></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="me-2 d-none d-sm-block">
+                        <div class="avatar" title="{{ user.username }}">{% if user.profile.picture.url %}<img src="{{ user.profile.picture.url }}" alt="avatar" style="width:100%;height:100%;object-fit:cover">{% else %}{{ user.get_full_name|slice:":1"|default:user.username|slice:":1"|upper }}{% endif %}</div>
+                    </div>
+                    <div>
+                        <!-- keep original logout form to preserve backend logic -->
+                        <form id="logoutForm" action="{% url 'logout' %}" method="post" style="display:inline">{% csrf_token %}
+                            <button type="submit" class="btn btn-outline-secondary btn-sm d-none d-md-inline">Logout</button>
+                        </form>
+                    </div>
+                </div>
+            </header>
+
+            <main class="container-xl mt-3">
+                <section class="stats fade-up">
+                    <div class="card-stat">
+                        <div class="meta"><div class="label">My Reports</div><div class="value">{{ my_reports_count|default:0 }}</div></div>
+                        <div class="accent" style="background:linear-gradient(90deg,var(--royal),var(--indigo))"><i class="bi bi-journal-text" style="font-size:1.25rem"></i></div>
+                    </div>
+                    <div class="card-stat">
+                        <div class="meta"><div class="label">Pending Reports</div><div class="value">{{ pending_reports_count|default:0 }}</div></div>
+                        <div class="accent" style="background:linear-gradient(90deg,var(--purple),var(--royal))"><i class="bi bi-hourglass-split" style="font-size:1.25rem"></i></div>
+                    </div>
+                    <div class="card-stat">
+                        <div class="meta"><div class="label">Under Review</div><div class="value">{{ under_review_count|default:0 }}</div></div>
+                        <div class="accent" style="background:linear-gradient(90deg,var(--indigo),var(--purple))"><i class="bi bi-people" style="font-size:1.25rem"></i></div>
+                    </div>
+                    <div class="card-stat">
+                        <div class="meta"><div class="label">Resolved</div><div class="value">{{ resolved_reports_count|default:0 }}</div></div>
+                        <div class="accent" style="background:linear-gradient(90deg,var(--emerald),#059669)"><i class="bi bi-check-circle" style="font-size:1.25rem"></i></div>
+                    </div>
+                </section>
+
+                <section class="banner mt-3">
+                    <div>
+                        <h5 style="margin:0">You are not alone</h5>
+                        <p class="mb-0 text-muted">Report safely and access support. Your information will be handled confidentially and with care.</p>
+                    </div>
+                    <div class="d-none d-sm-block">
+                        <a href="{% url 'dashboard_submit' %}" class="btn btn-primary">Submit a Report</a>
+                    </div>
+                </section>
+
+                <section class="quick-actions">
+                    <a href="{% url 'dashboard_submit' %}" class="quick-btn">
+                        <i class="bi bi-pencil-square" style="font-size:1.35rem"></i>
+                        <strong>Submit New Report</strong>
+                        <small class="text-white-50">Create a new report linked to your account.</small>
+                    </a>
+                    <a href="{% url 'my_reports' %}" class="quick-btn">
+                        <i class="bi bi-list-check" style="font-size:1.35rem"></i>
+                        <strong>View My Reports</strong>
+                        <small class="text-white-50">Open your submitted cases and statuses.</small>
+                    </a>
+                    <a href="{% url 'user_profile' %}" class="quick-btn secondary">
+                        <i class="bi bi-person-badge" style="font-size:1.35rem;color:var(--royal)"></i>
+                        <strong>Update Profile</strong>
+                        <small class="text-muted">Edit your contact details and preferences.</small>
+                    </a>
+                    <a href="{% url 'chatbot' %}" class="quick-btn secondary">
+                        <i class="bi bi-chat-square-text" style="font-size:1.35rem;color:var(--royal)"></i>
+                        <strong>Contact Support</strong>
+                        <small class="text-muted">Chat with our support assistant or advisers.</small>
+                    </a>
+                </section>
+
+                <section class="table-wrap mt-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">Recent Reports</h5>
+                        <small class="text-muted">Latest activity on your account</small>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Reference</th>
+                                    <th>Title</th>
+                                    <th>Submitted</th>
+                                    <th>Status</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for report in reports %}
+                                    <tr>
+                                        <td>{{ forloop.counter }}</td>
+                                        <td>{{ report.reference_number|default:report.id }}</td>
+                                        <td>{{ report.title|default:report.description|default:"-" }}</td>
+                                        <td>{{ report.created_at|date:"M d, Y" }}</td>
+                                        <td>
+                                            {% if report.status == 'Pending' %}
+                                                <span class="status-badge status-pending">Pending</span>
+                                            {% elif report.status == 'Under Review' or report.status == 'Review' %}
+                                                <span class="status-badge status-review">Under Review</span>
+                                            {% elif report.status == 'Resolved' or report.status == 'Closed' %}
+                                                <span class="status-badge status-resolved">Resolved</span>
+                                            {% else %}
+                                                <span class="status-badge" style="background:#eef2ff;color:#1e3a8a">{{ report.status }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-end"><a href="{% url 'report_detail' report.id %}" class="btn btn-sm btn-outline-primary">View</a></td>
+                                    </tr>
+                                {% empty %}
+                                    <tr><td colspan="6" class="text-center text-muted">You have not submitted any reports yet.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Sidebar toggle
+        const sidebar = document.getElementById('sidebar');
+        const btn = document.getElementById('btnToggle');
+        btn?.addEventListener('click', ()=>{ sidebar.classList.toggle('collapsed'); btn.querySelector('i').classList.toggle('bi-chevron-right'); btn.querySelector('i').classList.toggle('bi-chevron-left'); });
+
+        // Submit existing logout form from sidebar link without duplicating form
+        document.getElementById('sidebarLogoutLink')?.addEventListener('click', function(e){
+            e.preventDefault();
+            const f = document.getElementById('logoutForm'); if(f) f.submit();
+        });
+
+        // Simple loading shimmer when table links clicked
+        document.querySelectorAll('a.btn, a.btn-outline-primary, .quick-btn, .btn').forEach(el=>{
+            el.addEventListener('click', ()=>{
+                // show small spinner on click (non-blocking)
+                el.classList.add('text-opacity-75');
+            })
+        });
+    </script>
+</body>
+</html>

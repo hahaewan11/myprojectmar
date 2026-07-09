@@ -1,0 +1,485 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporter Dashboard | GBV Support System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2d6a4f;
+            --secondary: #40916c;
+            --soft: #d8f3dc;
+            --card: #ffffff;
+            --text: #1b4332;
+            --muted: #4b5563;
+            --danger: #d00000;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f7f9f6;
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 24px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 15px 35px rgba(18, 48, 34, 0.12);
+        }
+
+        .navbar .brand {
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .navbar .profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .navbar .profile .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.18);
+            display: grid;
+            place-items: center;
+            font-size: 1.1rem;
+        }
+
+        .navbar .profile .name {
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(255,255,255,0.28);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 999px;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-1px);
+            background: rgba(255, 255, 255, 0.28);
+        }
+
+        .hero {
+            max-width: 1120px;
+            margin: 20px auto;
+            padding: 28px 24px;
+            border-radius: 20px;
+            background: radial-gradient(circle at top left, rgba(66, 201, 150, 0.18), transparent 40%), #ffffff;
+            box-shadow: 0 18px 40px rgba(18, 48, 34, 0.06);
+        }
+
+        .hero h1 {
+            font-size: clamp(1.8rem, 2.5vw, 2.6rem);
+            margin-bottom: 12px;
+        }
+
+        .hero p.lead {
+            color: var(--muted);
+            line-height: 1.7;
+            margin-bottom: 18px;
+            max-width: 760px;
+        }
+
+        .hero .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--soft);
+            color: var(--primary);
+            padding: 10px 16px;
+            border-radius: 999px;
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+
+        .layout {
+            max-width: 1120px;
+            margin: 0 auto 30px;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 22px;
+            padding: 0 22px;
+        }
+
+        .section {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 22px;
+            box-shadow: 0 18px 40px rgba(18, 48, 34, 0.06);
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 18px;
+            margin-top: 10px;
+        }
+
+        .card {
+            border-radius: 18px;
+            padding: 20px;
+            background: linear-gradient(180deg, #ffffff 0%, #f6fcf6 100%);
+            border: 1px solid #eff7ee;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            min-height: 220px;
+        }
+
+        .card .icon {
+            width: 52px;
+            height: 52px;
+            display: grid;
+            place-items: center;
+            border-radius: 16px;
+            background: rgba(45, 106, 79, 0.12);
+            color: var(--primary);
+            font-size: 1.4rem;
+        }
+
+        .card h3 {
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .card p {
+            color: var(--muted);
+            line-height: 1.6;
+            font-size: 0.95rem;
+            flex: 1;
+        }
+
+        .card a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            font-weight: 700;
+            margin-top: auto;
+        }
+
+        .info-block,
+        .upload-block,
+        .reminders {
+            margin-top: 16px;
+        }
+
+        .info-block h2,
+        .upload-block h2,
+        .reminders h2,
+        .how-help h2 {
+            font-size: 1.1rem;
+            margin-bottom: 14px;
+            color: var(--primary);
+        }
+
+        .info-list,
+        .hint-list,
+        .hotline-list,
+        .safe-list {
+            list-style: none;
+            padding-left: 0;
+            display: grid;
+            gap: 10px;
+        }
+
+        .info-list li,
+        .hint-list li,
+        .hotline-list li,
+        .safe-list li {
+            background: #f8faf7;
+            border: 1px solid #e6efe7;
+            border-radius: 14px;
+            padding: 14px 16px;
+            color: var(--muted);
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .info-list li strong,
+        .hotline-list li strong {
+            color: var(--text);
+        }
+
+        .upload-block .preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .preview-card {
+            border: 1px solid #e6efe7;
+            border-radius: 16px;
+            background: #ffffff;
+            padding: 14px;
+            min-height: 120px;
+            display: grid;
+            place-items: center;
+            color: var(--muted);
+            text-align: center;
+            font-size: 0.96rem;
+        }
+
+        .preview-card span {
+            display: block;
+            margin-top: 8px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .report-list {
+            display: grid;
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .report-item {
+            padding: 16px;
+            border-radius: 16px;
+            background: #f8faf7;
+            border: 1px solid #e6efe7;
+        }
+
+        .report-item strong {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+
+        .report-line {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 0.92rem;
+            color: var(--muted);
+        }
+
+        .report-line span {
+            background: #eef6ee;
+            padding: 6px 10px;
+            border-radius: 999px;
+        }
+
+        .reminders .note {
+            background: #eaf7ee;
+            border: 1px solid #d6ebd9;
+            border-radius: 16px;
+            padding: 16px;
+            line-height: 1.7;
+            color: var(--muted);
+        }
+
+        .footer {
+            max-width: 1120px;
+            margin: 0 auto 28px;
+            padding: 20px 22px;
+            color: #4b5563;
+            font-size: 0.94rem;
+            text-align: center;
+        }
+
+        .footer strong {
+            color: var(--text);
+        }
+
+        @media (max-width: 980px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .navbar {
+                flex-direction: column;
+                gap: 14px;
+                text-align: center;
+            }
+
+            .navbar .profile {
+                justify-content: center;
+            }
+
+            .hero,
+            .section {
+                border-radius: 18px;
+                padding: 20px;
+            }
+
+            .card {
+                min-height: auto;
+            }
+
+            .report-line {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="navbar">
+        <div class="brand"><i class="fa-solid fa-user-pen"></i> Reporter Dashboard</div>
+        <div class="profile">
+            <div class="avatar"><i class="fa-regular fa-user"></i></div>
+            <div class="name">{{ user.get_full_name|default:user.username }}</div>
+            <a href="{% url 'logout' %}" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+        </div>
+    </header>
+
+    <section class="hero">
+        <span class="pill"><i class="fa-solid fa-shield-check"></i> Safe • Confidential • Supportive</span>
+        <h1>Gender-Based Violence Report & Support System</h1>
+        <p class="lead">We are here to listen and help. Your information and evidence remain confidential and secure.</p>
+    </section>
+
+    <main class="layout">
+        <div>
+            <section class="section">
+                <h2>Main Actions</h2>
+                <div class="cards">
+                    <article class="card">
+                        <div class="icon"><i class="fa-solid fa-file-circle-plus"></i></div>
+                        <h3>Report Incident</h3>
+                        <p>Submit an incident report. Choose anonymous or named and upload evidence.</p>
+                        <a href="#report-process"><i class="fa-solid fa-arrow-right-long"></i> View Process</a>
+                    </article>
+                    <article class="card">
+                        <div class="icon"><i class="fa-solid fa-comments"></i></div>
+                        <h3>Chat Support</h3>
+                        <p>Talk with the chatbot, ask about reporting, evidence, and emergency hotlines.</p>
+                        <a href="{% url 'chatbot' %}"><i class="fa-solid fa-arrow-right-long"></i> Open Chat</a>
+                    </article>
+                    <article class="card">
+                        <div class="icon"><i class="fa-solid fa-folder-open"></i></div>
+                        <h3>My Reports</h3>
+                        <p>View your reports, status, reference numbers, and uploaded photos or videos.</p>
+                        <a href="#reports"><i class="fa-solid fa-arrow-right-long"></i> View Reports</a>
+                    </article>
+                    <article class="card">
+                        <div class="icon"><i class="fa-solid fa-circle-info"></i></div>
+                        <h3>Information & Help</h3>
+                        <p>Types of violence, rights, agency support, and safe evidence upload guidance.</p>
+                        <a href="#information"><i class="fa-solid fa-arrow-right-long"></i> Learn More</a>
+                    </article>
+                    <article class="card">
+                        <div class="icon"><i class="fa-solid fa-phone-volume"></i></div>
+                        <h3>Emergency Hotlines</h3>
+                        <p>Call police, DSWD, barangay, medical, and legal help when needed.</p>
+                        <a href="#hotlines"><i class="fa-solid fa-arrow-right-long"></i> View Numbers</a>
+                    </article>
+                </div>
+            </section>
+
+            <section class="section upload-block" id="report-process">
+                <h2>Report Incident Process</h2>
+                <ul class="hint-list">
+                    <li><strong>1.</strong> Choose anonymous or named reporting</li>
+                    <li><strong>2.</strong> Select the type of violence
+</li>
+                    <li><strong>3.</strong> Enter the incident details</li>
+                    <li><strong>4.</strong> Include date, time, and exact location</li>
+                    <li><strong>5.</strong> Upload evidence such as photos, videos, or documents</li>
+                    <li><strong>6.</strong> Submit the report and receive a unique reference number</li>
+                </ul>
+
+                <div class="preview">
+                    <div class="preview-card"><i class="fa-solid fa-camera"></i><span>Photos</span></div>
+                    <div class="preview-card"><i class="fa-solid fa-video"></i><span>Videos</span></div>
+                    <div class="preview-card"><i class="fa-solid fa-file-pdf"></i><span>Documents</span></div>
+                </div>
+            </section>
+
+            <section class="section how-help">
+                <h2>How We Help</h2>
+                <ul class="safe-list">
+                    <li><strong>Submit reports and evidence</strong> to the right authorities for urgent action.</li>
+                    <li><strong>Review provided information</strong> to understand the situation and provide proper support.</li>
+                    <li><strong>Provide legal rights information</strong> and next steps.</li>
+                    <li><strong>Connect to medical and psychological services</strong> for long-term support.</li>
+                    <li><strong>Ensure safety and privacy</strong> of all information and documents.</li>
+                </ul>
+            </section>
+        </div>
+
+        <aside>
+            <section class="section" id="information">
+                <h2>Information & Help</h2>
+                <ul class="info-list">
+                    <li><i class="fa-solid fa-shield-halved"></i><strong>Types of violence</strong> — physical, emotional, sexual, economic, and harassment.</li>
+                    <li><i class="fa-solid fa-scale-balanced"></i><strong>Your rights</strong> — protection, privacy, and fair action.</li>
+                    <li><i class="fa-solid fa-hand-holding-heart"></i><strong>Agencies and organizations</strong> — support for safety, medical, and legal needs.</li>
+                </ul>
+            </section>
+
+            <section class="section" id="hotlines">
+                <h2>Emergency Hotlines</h2>
+                <ul class="hotline-list">
+                    <li><i class="fa-solid fa-phone"></i><strong>Police:</strong> 911 / local precinct</li>
+                    <li><i class="fa-solid fa-phone"></i><strong>DSWD:</strong> [Enter the correct number]</li>
+                    <li><i class="fa-solid fa-phone"></i><strong>Barangay Office:</strong> Local barangay or family assistance office</li>
+                    <li><i class="fa-solid fa-hospital-user"></i><strong>Medical & Legal:</strong> Medical and legal services</li>
+                </ul>
+            </section>
+
+            <section class="section reminders">
+                <h2>Upload Reminders</h2>
+                <div class="note">
+                    Acceptable formats: JPG, PNG, PDF for photos and documents; MP4 for videos.<br>
+                    Maximum file size: 10MB each.<br>
+                    Up to 5 photos and 2 videos per report.<br>
+                    All submissions remain confidential and are used only to help and resolve the case.
+                </div>
+            </section>
+
+            <section class="section" id="reports">
+                <h2>My Reports</h2>
+                <div class="report-list">
+                    <div class="report-item">
+                        <strong>Report #2026-RP-0145</strong>
+                        <div class="report-line"><span>Status: Under Review</span><span>Date: 2026-05-16</span><span>Type: Emotional</span></div>
+                        <p style="margin-top:10px;color:var(--muted);">Uploaded evidence: 2 photos, 1 video</p>
+                    </div>
+                    <div class="report-item">
+                        <strong>Report #2026-RP-0132</strong>
+                        <div class="report-line"><span>Status: Resolved</span><span>Date: 2026-04-28</span><span>Type: Sexual</span></div>
+                        <p style="margin-top:10px;color:var(--muted);">Uploaded evidence: 3 photos, 1 document</p>
+                    </div>
+                </div>
+            </section>
+        </aside>
+    </main>
+
+    <footer class="footer">
+        © 2026 GBV Support System | All rights reserved. This system is secure and confidential. Your evidence is safely stored.
+    </footer>
+</body>
+</html>

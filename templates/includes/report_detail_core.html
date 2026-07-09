@@ -1,0 +1,22 @@
+<h2>{{ report.title }}</h2>
+<div class="section">
+    <strong>Full Incident Story</strong>
+    <p>{{ report.description }}</p>
+</div>
+<div class="section">
+    <strong>Details</strong>
+    <p><strong>Date:</strong> {{ report.date_of_incident|default:report.created_at|date:"Y-m-d" }}</p>
+    <p><strong>Time:</strong> {{ report.time_of_incident|time:"H:i"|default:'N/A' }}</p>
+    <p><strong>Location:</strong> {{ report.location|default:'Unspecified' }}</p>
+    <p><strong>Case Type:</strong> {{ report.case_type|default:'Unspecified' }}</p>
+</div>
+<div class="section">
+    <strong>Reporter Information</strong>
+    <p><strong>Name:</strong> {{ report.reporter_name }}</p>
+    <p><strong>Email:</strong> {{ report.email|default:'Not provided' }}</p>
+    <p><strong>Status:</strong> <span class="badge {{ report.status_class }}">{{ report.status }}</span></p>
+</div>
+<div class="section">
+    <strong>Admin Response</strong>
+    <p>{% if report.admin_response %}{{ report.admin_response|linebreaksbr }}{% else %}No response yet.{% endif %}</p>
+</div>

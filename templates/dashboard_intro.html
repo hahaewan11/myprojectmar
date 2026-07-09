@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mahahalagang Impormasyon | GBV Support</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #e0f2fe, #f8fafc); color: #0f172a; }
+        .container { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .card { width: 100%; max-width: 760px; background: white; border-radius: 24px; padding: 36px; box-shadow: 0 24px 55px rgba(15, 23, 42, 0.12); }
+        .card h1 { font-size: clamp(2rem, 2.5vw, 2.6rem); margin-bottom: 12px; }
+        .lead { font-size: 1rem; line-height: 1.8; margin-bottom: 26px; color: #334155; }
+        .bullet-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+        .bullet-list li { display: grid; grid-template-columns: auto 1fr; gap: 14px; align-items: flex-start; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 18px; color: #334155; }
+        .bullet-list li .icon { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; background: #dbeafe; color: #1d4ed8; }
+        .continue-button { display: inline-flex; justify-content: center; align-items: center; gap: 10px; margin-top: 28px; width: 100%; padding: 16px 22px; border: none; border-radius: 999px; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; font-size: 1rem; font-weight: 700; text-decoration: none; }
+        .note { margin-top: 18px; font-size: 0.95rem; color: #475569; }
+        .small-tag { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 18px; padding: 10px 16px; background: #eff6ff; border-radius: 999px; color: #1d4ed8; font-weight: 700; }
+        @media (max-width: 640px) { .card { padding: 24px; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <span class="small-tag"><i class="fa-solid fa-triangle-exclamation"></i> Important Information and Reminders</span>
+            <h1>Important Information and Reminders</h1>
+            <p class="lead">Before you continue to the dashboard, please read these reminders about your privacy, safety, and proper use of the system.</p>
+            <ul class="bullet-list">
+                <li><span class="icon"><i class="fa-solid fa-check"></i></span> This system is secure, private, and confidential.</li>
+                <li><span class="icon"><i class="fa-solid fa-check"></i></span> Any details, photos, and videos you provide are kept private and used only for your safety.</li>
+                <li><span class="icon"><i class="fa-solid fa-check"></i></span> You may report anonymously if you prefer.</li>
+                <li><span class="icon"><i class="fa-solid fa-check"></i></span> This system is intended only to help and resolve cases of violence.</li>
+                <li><span class="icon"><i class="fa-solid fa-check"></i></span> Make sure all information you provide is truthful and accurate.</li>
+                <li><span class="icon"><i class="fa-solid fa-check"></i></span> If you are in immediate danger, call the hotlines listed in the system.</li>
+            </ul>
+            <a href="{% url 'dashboard' %}" class="continue-button">CONTINUE <i class="fa-solid fa-arrow-right"></i></a>
+            <p class="note">When you press CONTINUE, you will be taken to the User Dashboard where you can submit a report and view your reports.</p>
+        </div>
+    </div>
+</body>
+</html>
