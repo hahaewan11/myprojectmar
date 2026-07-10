@@ -70,6 +70,20 @@
 }
             .form-control{border-radius:10px}
             .btn-gradient{background:linear-gradient(90deg,var(--royal),var(--purple));color:#fff;border:none}
+            .password-field-wrap{position:relative}
+            .password-field-wrap .form-control{padding-right:44px}
+            .password-field-wrap #togglePassword{
+                position:absolute;
+                right:8px;
+                top:50%;
+                transform:translateY(-50%);
+                border:0;
+                background:transparent;
+                color:#6b7280;
+                padding:0 8px;
+                line-height:1;
+            }
+            .password-field-wrap #togglePassword:hover{color:#2563EB}
             /* hide browser native password reveal controls on Windows/Edge/Chrome */
              input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear,
@@ -232,23 +246,21 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
                         {% csrf_token %}
 
                         <div class="mb-3">
-                            <label for="{{ form.username.id_for_label }}" class="form-label">Email or Username</label>
                             {{ form.username }}
                             {% if form.username.errors %}
                                 <small class="text-danger d-block mt-2">{{ form.username.errors }}</small>
                             {% endif %}
                         </div>
 
-                        <div class="mb-3 position-relative">
-                            <label for="{{ form.password.id_for_label }}" class="form-label">Password</label>
+                        <div class="mb-3 password-field-wrap">
                             {{ form.password }}
-                            <button type="button" class="btn btn-sm position-absolute" style="right:10px;top:36px;" id="togglePassword" aria-label="Show password"><i class="bi bi-eye"></i></button>
+                            <button type="button" class="btn btn-sm" id="togglePassword" aria-label="Show password"><i class="bi bi-eye"></i></button>
                             {% if form.password.errors %}
                                 <small class="text-danger d-block mt-2">{{ form.password.errors }}</small>
                             {% endif %}
                         </div>
 
-                        <div class="mb-3 captcha-box text-center">
+                        <div class="mb-3 captcha-box d-flex flex-column align-items-center text-center">
                             {{ form.captcha }}
                             {% if form.captcha.errors %}
                                 <small class="text-danger d-block mt-2">{{ form.captcha.errors }}</small>

@@ -105,7 +105,7 @@ class GBVReportForm(forms.Form):
 
 class LoginForm(forms.Form):
     username = forms.CharField(
-        label='Email or Username',
+        label='',
         widget=forms.TextInput(attrs={
             'class': 'form-control',
             'placeholder': 'Email or Username'
@@ -113,7 +113,7 @@ class LoginForm(forms.Form):
     )
 
     password = forms.CharField(
-        label='Password',
+        label='',
         widget=forms.PasswordInput(attrs={
             'class': 'form-control',
             'placeholder': 'Password'
