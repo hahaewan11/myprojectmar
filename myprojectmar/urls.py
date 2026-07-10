@@ -5,6 +5,7 @@ from security.views import admin_dashboard_view
 
 urlpatterns = [
     path('', include('security.urls')),
+    path('', include('users.urls')),
 
     path('admin/dashboard/', admin_dashboard_view, name='admin_dashboard'),
     path('admin/', admin.site.urls),

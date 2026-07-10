@@ -17,6 +17,15 @@ ALLOWED_HOSTS = [
     "localhost",
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://marloncalimpusan.pythonanywhere.com",
+    "http://127.0.0.1:8000",
+    "http://localhost:8000",
+]
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+USE_X_FORWARDED_HOST = True
+
 
 # Application definition
 
@@ -29,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_recaptcha',
     'security',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -51,6 +61,7 @@ TEMPLATES = [
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
+                'django.template.context_processors.csrf',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
