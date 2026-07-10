@@ -29,10 +29,16 @@ def login_view(request):
 
     if request.method == "POST":
         if form.is_valid():
-            username = form.cleaned_data.get("username")
+            identifier = form.cleaned_data.get("username")
             password = form.cleaned_data.get("password")
 
-            user = authenticate(request, username=username, password=password)
+            user = None
+            if identifier and '@' in identifier:
+                user_obj = User.objects.filter(email__iexact=identifier).first()
+                if user_obj is not None:
+                    user = authenticate(request, username=user_obj.username, password=password)
+            else:
+                user = authenticate(request, username=identifier, password=password)
 
             if user is not None:
 
